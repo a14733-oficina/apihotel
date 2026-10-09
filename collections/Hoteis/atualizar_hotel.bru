@@ -1,0 +1,20 @@
+meta {
+  name: atualizar_hotel
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://127.0.0.1:5000/hoteis/water2
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nome":"Waterfall Resort Beach",
+    "estrelas":4.6,
+    "diaria":217.99,
+    "cidade":"guidoes"
+  }
+}
