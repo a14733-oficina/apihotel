@@ -1,11 +1,23 @@
 from flask import Flask
 from flask_restful import Resource,reqparse
 from models.hotel import HotelModel
+from flask_jwt_extended import jwt_required
 
 class Hoteis(Resource):
+    parametros =reqparse.RequestParser()#selecionar dados dos parametros na url
+    parametros.add_argument("cidade",type=str,default="",location ="agrs")
+    parametros.add_argument("estrelas_min",type=float,default=0,location ="agrs")
+    parametros.add_argument("estrelas_max",type=float,default=0,location ="agrs")
+    parametros.add_argument("diaria_min",type=float,default=0,location ="agrs")
+    parametros.add_argument("diaria_max",type=float,default=0,location ="agrs")
+    parametros.add_argument("ites",type=int,default=5,location ="agrs")
+    parametros.add_argument("paginas",type=int,default=1,location ="agrs")
     def get(self):
         return {"hoteis":[hotel.json() for hotel in HotelModel.query.all()]}
 
+    def get(self):
+        meus_filtros=Hoteis.parametros.parse_args()
+        query = HotelModel.query#pequisar por .. na tabela que Hotelmodel representa
 class Hotel(Resource):
     argumentos = reqparse.RequestParser()
     argumentos.add_argument("nome",type=str, required = True, help="O nome do hotel é obrigatório")
@@ -18,7 +30,8 @@ class Hotel(Resource):
         if hotel is not None:
             return hotel.json(), 200
         return{"mensagem": "Hotel não foi encontrado"}
-    
+
+    @jwt_required()
     def post(self, hotel_id):
         dados = Hotel.argumentos.parse_args()
         Hotel= HotelModel.find_hotel(hotel_id)
@@ -30,7 +43,7 @@ class Hotel(Resource):
             return novo_hotel.json(),200
         except:
             return{"mensagem": "Um erro interno do server aconteceu"},500
-    
+    @jwt_required()
     def put(self, hotel_id):
         dados = Hotel.argumentos.parse_args()
 
@@ -46,7 +59,7 @@ class Hotel(Resource):
         novo_hotel.save_hotel()
         return novo_hotel.json,201
     
-
+    @jwt_required()
     def delete(self,hotel_id):
         hotel =HotelModel.find_hotel(hotel_id)
         if hotel is not None:

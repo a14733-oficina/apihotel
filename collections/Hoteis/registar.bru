@@ -4,9 +4,15 @@ meta {
   seq: 1
 }
 
-get {
-  url: https://api.example.com
-  body: none
+post {
+  url: http://127.0.0.1:5000/registar
+  body: json
   auth: none
 }
-​
+
+body:json {
+  {
+    "username":"admin",
+    "password":"oficina"
+  }
+}
